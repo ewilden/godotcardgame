@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqx386s87438g"]
+
+[ext_resource type="Script" uid="uid://b6rb2wrgmrd7t" path="res://scenes/Card.cs" id="1_1a1a1"]
+
+[node name="Card" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 100.0
+offset_bottom = 150.0
+script = ExtResource("1_1a1a1")
+Rank = "Q"
+Suit = "Hearts"
+
+[node name="CardBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RankLabel" type="Label" parent="."]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "A"
+uppercase = true
+
+[node name="SuitLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -40.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "♠"
+horizontal_alignment = 2
+vertical_alignment = 2
+uppercase = true
+
+[connection signal="gui_input" from="." to="." method="_GuiInput"]
+[connection signal="gui_input" from="CardBackground" to="." method="_GuiInput"]
