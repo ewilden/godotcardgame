@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// Represents a deck of cards in the game.
@@ -25,8 +26,11 @@ public partial class Deck : Control
   // Random number generator
   private RandomNumberGenerator _rng;
 
-  // Keep track of spawned cards
+  // Keep track of spawned card nodes
   private List<Card> _spawnedCards = new List<Card>();
+
+  // The actual deck of cards
+  private Stack<CardData> _cardDeck = new Stack<CardData>();
 
   // Called when the node enters the scene tree for the first time.
   public override void _Ready()
@@ -46,6 +50,9 @@ public partial class Deck : Control
 
     // Create the visual stack of card backs
     CreateVisualStack();
+
+    // Initialize and shuffle the deck
+    InitializeDeck();
   }
 
   /// <summary>
@@ -75,6 +82,40 @@ public partial class Deck : Control
   }
 
   /// <summary>
+  /// Initializes a fresh deck of 52 cards and shuffles them
+  /// </summary>
+  private void InitializeDeck()
+  {
+    // Clear the current deck
+    _cardDeck.Clear();
+
+    // Create a list of all possible cards
+    var cards = new List<CardData>();
+    foreach (var suit in Suits)
+    {
+      foreach (var rank in Ranks)
+      {
+        cards.Add(new CardData(rank, suit));
+      }
+    }
+
+    // Shuffle the cards using Fisher-Yates shuffle
+    for (int i = cards.Count - 1; i > 0; i--)
+    {
+      int j = _rng.RandiRange(0, i);
+      (cards[i], cards[j]) = (cards[j], cards[i]); // Swap
+    }
+
+    // Push all cards onto the deck
+    foreach (var card in cards)
+    {
+      _cardDeck.Push(card);
+    }
+
+    GD.Print($"Deck initialized with {_cardDeck.Count} cards");
+  }
+
+  /// <summary>
   /// Handles GUI input events, specifically clicking to spawn cards
   /// </summary>
   public override void _GuiInput(InputEvent @event)
@@ -82,7 +123,14 @@ public partial class Deck : Control
     if (@event.IsActionPressed("click"))
     {
       AcceptEvent();
-      SpawnCard();
+      if (_cardDeck.Count > 0)
+      {
+        SpawnCard();
+      }
+      else
+      {
+        GD.Print("No more cards in deck!");
+      }
     }
   }
 
@@ -91,12 +139,15 @@ public partial class Deck : Control
   /// </summary>
   private void SpawnCard()
   {
+    // Pop the next card from the deck
+    var cardData = _cardDeck.Pop();
+
     // Instance a new card
     var card = _cardScene.Instantiate<Card>();
 
-    // Set random rank and suit
-    card.Rank = GetRandomRank();
-    card.Suit = GetRandomSuit();
+    // Set the card's rank and suit from the popped data
+    card.Rank = cardData.Rank;
+    card.Suit = cardData.Suit;
 
     // Position it slightly to the right of the deck
     card.Position = GlobalPosition + new Vector2(120, 0);
@@ -106,38 +157,27 @@ public partial class Deck : Control
 
     // Keep track of the spawned card
     _spawnedCards.Add(card);
+
+    GD.Print($"Drew {cardData}, {_cardDeck.Count} cards remaining");
   }
 
   /// <summary>
-  /// Gets a random rank from the available ranks
-  /// </summary>
-  private string GetRandomRank()
-  {
-    int index = _rng.RandiRange(0, Ranks.Length - 1);
-    return Ranks[index];
-  }
-
-  /// <summary>
-  /// Gets a random suit from the available suits
-  /// </summary>
-  private string GetRandomSuit()
-  {
-    int index = _rng.RandiRange(0, Suits.Length - 1);
-    return Suits[index];
-  }
-
-  /// <summary>
-  /// Clears all cards that were spawned from this deck
+  /// Clears all spawned cards and reinitializes the deck
   /// </summary>
   private void OnClearButtonPressed()
   {
+    // Remove all spawned card nodes
     foreach (var card in _spawnedCards)
     {
-      if (IsInstanceValid(card)) // Check if the card still exists
+      if (IsInstanceValid(card))
       {
         card.QueueFree();
       }
     }
     _spawnedCards.Clear();
+
+    // Reinitialize and shuffle the deck
+    InitializeDeck();
+    GD.Print("Cleared cards and reshuffled deck");
   }
 }
