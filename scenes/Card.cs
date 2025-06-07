@@ -12,6 +12,7 @@ public partial class Card : Control
     // directly from the Godot editor's Inspector panel.
     [Export] public string Rank { get; set; } = "A"; // e.g., "A", "K", "Q", "J", "10", "9", etc.
     [Export] public string Suit { get; set; } = "Spades"; // e.g., "Spades", "Hearts", "Diamonds", "Clubs"
+    [Export] public bool IsFaceUp { get; private set; } = true; // Whether the card is face up or face down
 
     // Internal state variables for dragging
     private bool _isDragging = false;
@@ -19,6 +20,7 @@ public partial class Card : Control
 
     // References to child nodes for visual elements
     private ColorRect _cardBackground;
+    private ColorRect _cardBack;
     private Label _rankLabel;
     private Label _suitLabel;
 
@@ -31,6 +33,7 @@ public partial class Card : Control
         GD.Print("Card ready!");
         // Get references to the child nodes defined in the .tscn scene file.
         _cardBackground = GetNode<ColorRect>("CardBackground");
+        _cardBack = GetNode<ColorRect>("CardBack");
         _rankLabel = GetNode<Label>("RankLabel");
         _suitLabel = GetNode<Label>("SuitLabel");
 
@@ -42,7 +45,7 @@ public partial class Card : Control
         // SetAnchorsPreset(LayoutPreset.Custom) is not strictly necessary if Size is set directly,
         // but it can be useful if you're working with Godot's layout system.
 
-        // Update the card's visual display based on its current Rank and Suit properties.
+        // Update the card's visual display based on its current properties.
         UpdateCardDisplay();
     }
 
@@ -71,7 +74,6 @@ public partial class Card : Control
         // Check if the event is a mouse button press or release.
         if (@event is InputEventMouseButton mouseButton)
         {
-            // We are interested in the left mouse button.
             if (mouseButton.ButtonIndex == MouseButton.Left)
             {
                 if (mouseButton.Pressed)
@@ -94,7 +96,21 @@ public partial class Card : Control
                     ZIndex = 0; // Assuming 0 is the default or desired non-dragging ZIndex.
                 }
             }
+            else if (mouseButton.ButtonIndex == MouseButton.Right && mouseButton.Pressed)
+            {
+                // Right click to flip the card
+                FlipCard();
+            }
         }
+    }
+
+    /// <summary>
+    /// Flips the card between face-up and face-down states.
+    /// </summary>
+    public void FlipCard()
+    {
+        IsFaceUp = !IsFaceUp;
+        UpdateCardDisplay();
     }
 
     /// <summary>
@@ -103,20 +119,29 @@ public partial class Card : Control
     /// </summary>
     private void UpdateCardDisplay()
     {
-        // Set the text for the rank label.
-        _rankLabel.Text = Rank;
-        // Get the appropriate Unicode symbol for the suit and set the suit label text.
-        _suitLabel.Text = GetSuitSymbol(Suit);
+        // Show/hide card face elements based on IsFaceUp
+        _cardBackground.Visible = IsFaceUp;
+        _rankLabel.Visible = IsFaceUp;
+        _suitLabel.Visible = IsFaceUp;
+        _cardBack.Visible = !IsFaceUp;
 
-        // Determine the text color based on the suit.
-        // Hearts and Diamonds are typically red, Spades and Clubs are black.
-        Color textColor = (Suit == "Hearts" || Suit == "Diamonds") ? Colors.Red : Colors.Black;
-        // Apply the calculated text color to both labels.
-        _rankLabel.AddThemeColorOverride("font_color", textColor);
-        _suitLabel.AddThemeColorOverride("font_color", textColor);
+        if (IsFaceUp)
+        {
+            // Set the text for the rank label.
+            _rankLabel.Text = Rank;
+            // Get the appropriate Unicode symbol for the suit and set the suit label text.
+            _suitLabel.Text = GetSuitSymbol(Suit);
 
-        // Set the background color of the card (e.g., white for the card face).
-        _cardBackground.Color = Colors.White;
+            // Determine the text color based on the suit.
+            // Hearts and Diamonds are typically red, Spades and Clubs are black.
+            Color textColor = (Suit == "Hearts" || Suit == "Diamonds") ? Colors.Red : Colors.Black;
+            // Apply the calculated text color to both labels.
+            _rankLabel.AddThemeColorOverride("font_color", textColor);
+            _suitLabel.AddThemeColorOverride("font_color", textColor);
+
+            // Set the background color of the card (e.g., white for the card face).
+            _cardBackground.Color = Colors.White;
+        }
     }
 
     /// <summary>

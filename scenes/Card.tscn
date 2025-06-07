@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://dqx386s87438g"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" uid="uid://b6rb2wrgmrd7t" path="res://scenes/Card.cs" id="1_1a1a1"]
+[ext_resource type="Script" path="res://scenes/Card.cs" id="1_1a1a1"]
 
 [node name="Card" type="Control"]
 layout_mode = 3
@@ -48,6 +48,15 @@ text = "♠"
 horizontal_alignment = 2
 vertical_alignment = 2
 uppercase = true
+
+[node name="CardBack" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 0.501961)
 
 [connection signal="gui_input" from="." to="." method="_GuiInput"]
 [connection signal="gui_input" from="CardBackground" to="." method="_GuiInput"]
