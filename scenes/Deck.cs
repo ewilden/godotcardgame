@@ -46,12 +46,10 @@ public partial class Deck : Control
         LayoutMode = 1, // Use anchors/containers layout mode
         CustomMinimumSize = Size,
         Size = Size,
-        Color = new Color(1, 0, 0, 0.5f) // Same red as card back
+        Color = new Color(1, 0, 0, 0.5f), // Same red as card back
+        MouseFilter = MouseFilterEnum.Ignore,
+        Position = StackOffset * i,
       };
-
-      // Position each card back with an offset
-      cardBack.Position = StackOffset * i;
-      cardBack.MouseFilter = MouseFilterEnum.Pass;
 
       // Add the card back to the scene
       AddChild(cardBack);
@@ -66,10 +64,14 @@ public partial class Deck : Control
   /// </summary>
   public override void _GuiInput(InputEvent @event)
   {
+    GD.Print($"Received input event: {@event.GetType()}");
+
+    // Handle raw mouse button events instead of actions
     if (@event is InputEventMouseButton mouseButton)
     {
-      if (mouseButton.ButtonIndex == MouseButton.Left && mouseButton.Pressed)
+      if (mouseButton.ButtonIndex == MouseButton.Left && !mouseButton.Pressed)
       {
+        GD.Print("Spawning card from mouse button release");
         SpawnCard();
       }
     }
