@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Represents a deck of cards in the game.
@@ -23,6 +24,9 @@ public partial class Deck : Control
 
   // Random number generator
   private RandomNumberGenerator _rng;
+
+  // Keep track of spawned cards
+  private List<Card> _spawnedCards = new List<Card>();
 
   // Called when the node enters the scene tree for the first time.
   public override void _Ready()
@@ -99,6 +103,9 @@ public partial class Deck : Control
 
     // Add it to the same parent as the deck
     GetParent().AddChild(card);
+
+    // Keep track of the spawned card
+    _spawnedCards.Add(card);
   }
 
   /// <summary>
@@ -117,5 +124,20 @@ public partial class Deck : Control
   {
     int index = _rng.RandiRange(0, Suits.Length - 1);
     return Suits[index];
+  }
+
+  /// <summary>
+  /// Clears all cards that were spawned from this deck
+  /// </summary>
+  private void OnClearButtonPressed()
+  {
+    foreach (var card in _spawnedCards)
+    {
+      if (IsInstanceValid(card)) // Check if the card still exists
+      {
+        card.QueueFree();
+      }
+    }
+    _spawnedCards.Clear();
   }
 }

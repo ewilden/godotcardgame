@@ -10,4 +10,12 @@ offset_right = 100.0
 offset_bottom = 150.0
 script = ExtResource("1_deck")
 
+[node name="ClearButton" type="Button" parent="."]
+layout_mode = 0
+offset_top = 181.0
+offset_right = 100.0
+offset_bottom = 212.0
+text = "Clear Cards"
+
 [connection signal="gui_input" from="." to="." method="_GuiInput"]
+[connection signal="pressed" from="ClearButton" to="." method="OnClearButtonPressed"]
