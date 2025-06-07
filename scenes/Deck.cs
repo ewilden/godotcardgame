@@ -17,10 +17,21 @@ public partial class Deck : Control
   // Reference to the Card scene for spawning new cards
   private PackedScene _cardScene;
 
+  // Available ranks and suits for card generation
+  private static readonly string[] Ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
+  private static readonly string[] Suits = { "Hearts", "Diamonds", "Clubs", "Spades" };
+
+  // Random number generator
+  private RandomNumberGenerator _rng;
+
   // Called when the node enters the scene tree for the first time.
   public override void _Ready()
   {
     GD.Print("Deck ready");
+
+    // Initialize random number generator
+    _rng = new RandomNumberGenerator();
+    _rng.Randomize(); // Seed with current time
 
     // Load the Card scene
     _cardScene = GD.Load<PackedScene>("res://scenes/Card.tscn");
@@ -64,16 +75,10 @@ public partial class Deck : Control
   /// </summary>
   public override void _GuiInput(InputEvent @event)
   {
-    GD.Print($"Received input event: {@event.GetType()}");
-
-    // Handle raw mouse button events instead of actions
-    if (@event is InputEventMouseButton mouseButton)
+    if (@event.IsActionPressed("click"))
     {
-      if (mouseButton.ButtonIndex == MouseButton.Left && !mouseButton.Pressed)
-      {
-        GD.Print("Spawning card from mouse button release");
-        SpawnCard();
-      }
+      AcceptEvent();
+      SpawnCard();
     }
   }
 
@@ -85,13 +90,32 @@ public partial class Deck : Control
     // Instance a new card
     var card = _cardScene.Instantiate<Card>();
 
+    // Set random rank and suit
+    card.Rank = GetRandomRank();
+    card.Suit = GetRandomSuit();
+
     // Position it slightly to the right of the deck
     card.Position = GlobalPosition + new Vector2(120, 0);
 
     // Add it to the same parent as the deck
     GetParent().AddChild(card);
+  }
 
-    // Ensure it's face up
-    card.FlipCard(); // Since cards start face-down by default now
+  /// <summary>
+  /// Gets a random rank from the available ranks
+  /// </summary>
+  private string GetRandomRank()
+  {
+    int index = _rng.RandiRange(0, Ranks.Length - 1);
+    return Ranks[index];
+  }
+
+  /// <summary>
+  /// Gets a random suit from the available suits
+  /// </summary>
+  private string GetRandomSuit()
+  {
+    int index = _rng.RandiRange(0, Suits.Length - 1);
+    return Suits[index];
   }
 }

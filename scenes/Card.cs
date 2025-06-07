@@ -71,36 +71,28 @@ public partial class Card : Control
     /// <param name="@event">The input event that occurred.</param>
     public override void _GuiInput(InputEvent @event)
     {
-        // Check if the event is a mouse button press or release.
-        if (@event is InputEventMouseButton mouseButton)
+        if (@event.IsActionPressed("click"))
         {
-            if (mouseButton.ButtonIndex == MouseButton.Left)
-            {
-                if (mouseButton.Pressed)
-                {
-                    // If the left mouse button is pressed down on the card:
-                    _isDragging = true; // Set dragging state to true.
-                    // Calculate the offset: the difference between the mouse's global position
-                    // and the card's global position. This offset is maintained during dragging.
-                    _dragOffset = GetGlobalMousePosition() - GlobalPosition;
-                    // Bring the card to the front by setting a high ZIndex.
-                    // Nodes with higher ZIndex values are drawn on top of nodes with lower ZIndex values.
-                    ZIndex = 100; // A sufficiently high value to ensure it's on top of other cards.
-                }
-                else
-                {
-                    // If the left mouse button is released:
-                    _isDragging = false; // Stop dragging.
-                    // Reset the ZIndex to its default value (or a lower value)
-                    // so it doesn't stay on top if not being dragged.
-                    ZIndex = 0; // Assuming 0 is the default or desired non-dragging ZIndex.
-                }
-            }
-            else if (mouseButton.ButtonIndex == MouseButton.Right && mouseButton.Pressed)
-            {
-                // Right click to flip the card
-                FlipCard();
-            }
+            AcceptEvent();
+            // If the left mouse button is pressed down on the card:
+            _isDragging = true; // Set dragging state to true.
+                                // Calculate the offset: the difference between the mouse's global position
+                                // and the card's global position. This offset is maintained during dragging.
+            _dragOffset = GetGlobalMousePosition() - GlobalPosition;
+            // Bring the card to the front by setting a high ZIndex.
+            // Nodes with higher ZIndex values are drawn on top of nodes with lower ZIndex values.
+            ZIndex = 100; // A sufficiently high value to ensure it's on top of other cards.
+        }
+        else if (@event.IsActionReleased("click"))
+        {
+            AcceptEvent();
+            _isDragging = false;
+            ZIndex = 0;
+        }
+        else if (@event.IsActionPressed("right_click"))
+        {
+            AcceptEvent();
+            FlipCard();
         }
     }
 
