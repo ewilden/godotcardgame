@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://c47o01av0h445"]
+
+[ext_resource type="Script" uid="uid://cxtgra4irghci" path="res://scenes/Deck.cs" id="1_deck"]
+
+[node name="Deck" type="Control"]
+custom_minimum_size = Vector2(100, 150)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 100.0
+offset_bottom = 150.0
+script = ExtResource("1_deck")
+
+[connection signal="gui_input" from="." to="." method="_GuiInput"]
