@@ -1,5 +1,3 @@
-using System;
-
 /// <summary>
 /// Represents the data for a playing card without the visual representation.
 /// This is used to efficiently store cards in the deck.
