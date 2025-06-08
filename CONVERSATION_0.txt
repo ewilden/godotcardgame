@@ -1,0 +1,38 @@
+We built a card game prototype in Godot 4.4 with C#. Here's what we did:
+
+1. Created a Card scene/script:
+   - Visual representation of a playing card with rank and suit
+   - Can be flipped between face-up and face-down states using right-click
+   - Can be dragged around using left-click
+   - Shows red or black text based on suit
+   - Has a red semi-transparent back when face-down
+
+2. Created a Deck scene/script:
+   - Visual stack of cards that shows more card backs when more cards remain
+   - Shows 1 card back per 10 cards in deck (rounded up)
+   - Shows dashed border placeholder when empty
+   - Left-click to draw a card
+   - Has a "Clear Cards" button below it that returns all cards to deck and reshuffles
+   - Uses a custom CardData struct to efficiently store card info
+   - Maintains a proper shuffled deck of 44 cards (standard 52-card deck minus red face cards and aces)
+   - Spawns cards to the right when drawn
+   - Tracks spawned cards for cleanup
+
+3. Created a Main scene:
+   - Contains an instance of the Deck
+   - Acts as the parent for spawned cards
+
+Key implementation details:
+- Cards are spawned as scenes but deck contents are stored as lightweight CardData structs
+- Used proper Godot input handling with AcceptEvent() to prevent event propagation
+- Implemented Fisher-Yates shuffle for the deck
+- Used Control nodes with proper layout handling
+- Maintained clean separation of concerns between Card and Deck functionality
+
+The current state is a working prototype where you can:
+1. Draw cards from the deck by clicking it
+2. See how many cards remain via the visual stack
+3. Drag cards around the screen
+4. Flip cards over
+5. Clear all cards and reshuffle the deck
+6. The deck excludes Jack, Queen, King, and Ace of Hearts and Diamonds 

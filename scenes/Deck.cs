@@ -144,12 +144,18 @@ public partial class Deck : Control
     // Clear the current deck
     _cardDeck.Clear();
 
-    // Create a list of all possible cards
+    // Create a list of all possible cards, excluding red face cards and aces
     var cards = new List<CardData>();
     foreach (var suit in Suits)
     {
+      bool isRedSuit = suit == "Hearts" || suit == "Diamonds";
       foreach (var rank in Ranks)
       {
+        // Skip red face cards and aces
+        if (isRedSuit && (rank == "A" || rank == "J" || rank == "Q" || rank == "K"))
+        {
+          continue;
+        }
         cards.Add(new CardData(rank, suit));
       }
     }
@@ -170,7 +176,7 @@ public partial class Deck : Control
     // Update the visual representation
     UpdateVisualStack();
 
-    GD.Print($"Deck initialized with {_cardDeck.Count} cards");
+    GD.Print($"Deck initialized with {_cardDeck.Count} cards"); // Should now show 44 cards
   }
 
   /// <summary>

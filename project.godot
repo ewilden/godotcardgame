@@ -15,6 +15,12 @@ run/main_scene="uid://b1wddkagp7s14"
 config/features=PackedStringArray("4.4", "C#", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=2304
+window/size/viewport_height=1296
+window/stretch/scale=2.0
+
 [dotnet]
 
 project/assembly_name="deckbuild"
